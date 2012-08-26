@@ -42,7 +42,7 @@ def convert_gpx_to_log(gpxfile, logfile=None, append=False):
 
 if __name__ == "__main__":
     print "Processing gpx files..."
-    if len(sys.argv) < 1:
+    if len(sys.argv) == 1:
         print "Usage: %s [gpx_files] [output_file]" % sys.argv[0]
         print "Wild cards are permitted in [gpx_files]"
         print ("If you specify wildcards in gpx_files and provide an "
