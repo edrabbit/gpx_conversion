@@ -31,12 +31,17 @@ def convert_gpx_to_log(gpxfile, logfile=None, append=False):
     for trk in obj.gpx.children:
         for trkseg in trk.children:
             for trkpt in trkseg.children:
-                lat = trkpt['lat']
-                lon = trkpt['lon']
-                elevation = trkpt.ele.cdata
-                timestamp = trkpt.time.cdata
-                event = ("%s lat=%s, lon=%s, elevation=%s\n"
-                         % (timestamp, lat, lon, elevation))
+                try:
+                    lat = trkpt['lat']
+                    lon = trkpt['lon']
+                    elevation = trkpt.ele.cdata
+                    timestamp = trkpt.time.cdata
+                    heartrate = trkpt.extensions.gpxtpx_TrackPointExtension.gpxtpx_hr.cdata
+                except IndexError, ex:
+                    pass
+
+                event = ("%s lat=%s, lon=%s, elevation=%s, heartrate=%s\n"
+                         % (timestamp, lat, lon, elevation, heartrate))
                 outfile.write(event)
     outfile.close()
 
