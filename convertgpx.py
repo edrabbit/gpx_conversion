@@ -33,10 +33,25 @@ def convert_gpx_to_log(gpxfile, logfile=None, append=False):
             for trkpt in trkseg.children:
                 lat = trkpt['lat']
                 lon = trkpt['lon']
-                elevation = trkpt.ele.cdata
+                if (not lat or not lon):
+                    # not actually a trkpt, skip it
+                    continue
+                try:
+                    elevation = trkpt.ele.cdata
+                except IndexError:
+                    # Sometimes we don't have elevation data
+                    pass
+                # hacky way to get heartrate from Garmin Connect GPX files
+                try:
+                    hr_name = trkpt.extensions.children[0].children[0]._name
+                    hr_cdata = trkpt.extensions.children[0].children[0].cdata
+                except IndexError:
+                    # Sometimes we don't have heart rate data
+                    pass
+
                 timestamp = trkpt.time.cdata
-                event = ("%s lat=%s, lon=%s, elevation=%s\n"
-                         % (timestamp, lat, lon, elevation))
+                event = ("%s lat=%s, lon=%s, elevation=%s, %s=%s\n"
+                         % (timestamp, lat, lon, elevation, hr_name, hr_cdata))
                 outfile.write(event)
     outfile.close()
 
